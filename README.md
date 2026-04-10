@@ -193,10 +193,9 @@ This approach is essential for **enterprise finance**, **treasury workflows**, a
 7.  **Approval States**: Comparison between "Approval Blocked" (unsecure) and "Approval Success" (secure).
 
 
-
-| Screenshot 1 | Screenshot 2 | Screenshot 3 | Screenshot 4 |
+| Welcome | Dashboard | Transactions | Security |
 | :---: | :---: | :---: | :---: |
-| <img src="https://github.com/user-attachments/assets/6452c7c2-9a18-4b28-9a81-10fcbafc483c" width="200"> | <img src="https://github.com/user-attachments/assets/8a535b12-8568-4abd-8f9b-739b09d7b8f9" width="200"> | <img src="https://github.com/user-attachments/assets/3b1182c5-7638-4e54-a610-a3c4a7ba1b71" width="200"> | <img src="https://github.com/user-attachments/assets/78f928dc-d6f0-48a1-b1ad-be69512c9932" width="200"> |
+| <img src="https://github.com/user-attachments/assets/6452c7c2-9a18-4b28-9a81-10fcbafc483c" width="200"/> | <img src="https://github.com/user-attachments/assets/8a535b12-8568-4abd-8f9b-739b09d7b8f9" width="200"/> | <img src="https://github.com/user-attachments/assets/3b1182c5-7638-4e54-a610-a3c4a7ba1b71" width="200"/> | <img src="https://github.com/user-attachments/assets/78f928dc-d6f0-48a1-b1ad-be69512c9932" width="200"/> |
 
 
 
