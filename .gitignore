@@ -1,27 +1,10 @@
-# macOS
+.gradle
+/build
+/local.properties
+/.idea
 .DS_Store
-
-# Python
-backend/.venv/
-__pycache__/
-*.pyc
-
-# Android / Gradle
-.gradle/
-local.properties
-android-app/.gradle/
-android-app/build/
-android-app/app/build/
-
-# Node
-landing/node_modules/
-landing/.next/
-landing/dist/
-
-# IDE
-.vscode/
-.idea/
-
-# Env
-.env
-.env.*
+*.log
+*.iml
+captures/
+.externalNativeBuild
+.cxx
