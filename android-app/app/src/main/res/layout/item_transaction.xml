@@ -1,0 +1,75 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:background="@drawable/bg_card_transaction">
+
+    <!-- ICON -->
+    <TextView
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:gravity="center"
+        android:text="⌂"
+        android:textColor="#FFD166"
+        android:background="@drawable/bg_icon_circle_dark"/>
+
+    <!-- TEXT -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginLeft="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Acme Corp Ltd"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TX-2847"
+            android:textColor="#7E8FB2"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Risk: 15/100   |   Pending"
+            android:textColor="#FFD166"
+            android:textSize="12sp"
+            android:layout_marginTop="6dp"/>
+
+    </LinearLayout>
+
+    <!-- AMOUNT -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="end">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="€12,500"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Today"
+            android:textColor="#7E8FB2"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
