@@ -64,7 +64,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_marginTop="12dp">
 
         <TextView
@@ -75,9 +75,7 @@
             android:textColor="#A6B4D0"
             android:textSize="13sp" />
 
-        <Space
-            android:layout_width="16dp"
-            android:layout_height="1dp" />
+        <Space android:layout_width="1dp" android:layout_height="4dp" />
 
         <TextView
             android:id="@+id/tvMeta"

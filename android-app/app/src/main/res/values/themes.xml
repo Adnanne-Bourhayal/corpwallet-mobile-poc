@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.CorpWallet" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">#BEDDCB</item>
+        <item name="colorOnPrimary">#163524</item>
+        <item name="colorSecondary">#BFD1E4</item>
+        <item name="android:statusBarColor">#05070B</item>
+        <item name="android:navigationBarColor">#05070B</item>
+    </style>
+</resources>
