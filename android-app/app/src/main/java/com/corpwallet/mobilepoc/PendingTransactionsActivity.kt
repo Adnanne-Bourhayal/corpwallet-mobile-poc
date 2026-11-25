@@ -42,8 +42,8 @@ class PendingTransactionsActivity : AppCompatActivity() {
                 .put("schemaVersion", 1).put("signals", signals)
             runCatching {
                 requireNotNull(contentResolver.openOutputStream(uri)).bufferedWriter().use { it.write(evidence.toString(2)) }
-            }.onSuccess { Toast.makeText(this, "Evidence saved", Toast.LENGTH_SHORT).show() }
-             .onFailure { Toast.makeText(this, "Could not save evidence", Toast.LENGTH_LONG).show() }
+            }.onSuccess { Toast.makeText(applicationContext, "Evidence saved", Toast.LENGTH_SHORT).show() }
+             .onFailure { Toast.makeText(applicationContext, "Could not save evidence", Toast.LENGTH_LONG).show() }
         }
     }
 
@@ -74,9 +74,10 @@ class PendingTransactionsActivity : AppCompatActivity() {
                 refresh.isEnabled = true
                 result.onSuccess { rows -> expenses = rows; render() }
                     .onFailure {
-                        summary.text = if (BuildConfig.API_BASE.isEmpty()) "Set an HTTPS API address for this build."
-                        else "Could not load expenses. Tap Refresh to retry."
-                        Toast.makeText(this, it.localizedMessage ?: "Connection unavailable", Toast.LENGTH_LONG).show()
+                        summary.text = when {
+                            BuildConfig.API_BASE.isEmpty() -> "Set an HTTPS API address for this build."
+                            else -> it.localizedMessage ?: "Could not load expenses. Tap Refresh to retry."
+                        }
                     }
             }
         }
