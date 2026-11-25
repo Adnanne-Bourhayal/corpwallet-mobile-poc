@@ -1,39 +1,24 @@
 package com.corpwallet.mobilepoc
 
 import android.content.Context
-import android.text.InputType
+import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.Spinner
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.json.JSONObject
 
 /** Collect a fictional request. The API decides whether a destination is eligible. */
 internal fun showExpenseForm(context: Context, submit: (JSONObject) -> Unit) {
-    val form = LinearLayout(context).apply {
-        orientation = LinearLayout.VERTICAL
-        val pad = (20 * resources.displayMetrics.density).toInt()
-        setPadding(pad, 0, pad, 0)
-    }
-    fun field(label: String): EditText = EditText(context).also {
-        it.hint = label
-        it.isSingleLine = true
-        form.addView(it)
-    }
-    val payee = field("Example supplier")
-    val purpose = field("Team expense purpose")
-    val amount = field("Amount in euros").apply {
-        inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-    }
-    form.addView(TextView(context).apply { text = "Payment destination" })
-    val destination = Spinner(context)
-    destination.adapter = ArrayAdapter(context, android.R.layout.simple_spinner_dropdown_item, listOf("Supplier invoice", "Crypto wallet"))
-    form.addView(destination)
-    val dialog = AlertDialog.Builder(context).setTitle("New sample expense")
-        .setView(ScrollView(context).apply { addView(form) })
+    val builder = MaterialAlertDialogBuilder(context).setTitle("New expense")
+    val form = LayoutInflater.from(builder.context).inflate(R.layout.expense_form, null)
+    val payee = form.findViewById<EditText>(R.id.formSupplier)
+    val purpose = form.findViewById<EditText>(R.id.formPurpose)
+    val amount = form.findViewById<EditText>(R.id.formAmount)
+    val destination = form.findViewById<Spinner>(R.id.formDestination)
+    destination.adapter = ArrayAdapter(builder.context, android.R.layout.simple_spinner_dropdown_item, listOf("Supplier invoice", "Crypto wallet"))
+    val dialog = builder.setView(form)
         .setNegativeButton("Cancel", null).setPositiveButton("Submit", null).create()
     dialog.show()
     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {

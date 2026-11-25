@@ -1,0 +1,14 @@
+<resources>
+    <color name="paper">#FAFAF8</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="ink">#17191D</color>
+    <color name="muted">#575A61</color>
+    <color name="line">#E1E2DF</color>
+    <color name="secondary">#EDEEEB</color>
+    <color name="wallet_blue">#2337A8</color>
+    <color name="on_wallet">#FFFFFF</color>
+    <color name="wallet_detail">#E0E4FF</color>
+    <color name="waiting">#744C04</color>
+    <color name="approved">#24664D</color>
+    <color name="declined">#983A42</color>
+</resources>

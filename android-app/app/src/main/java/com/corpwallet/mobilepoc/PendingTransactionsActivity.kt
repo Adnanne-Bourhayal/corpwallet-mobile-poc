@@ -1,18 +1,25 @@
 package com.corpwallet.mobilepoc
 
 import android.content.pm.ApplicationInfo
-import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.TooltipCompat
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.json.JSONObject
+import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.Currency
+import java.util.Locale
 import java.util.concurrent.Executors
 
 /** Local expense desk. The review log is fetched again after every decision. */
@@ -21,7 +28,8 @@ class PendingTransactionsActivity : AppCompatActivity() {
     private val api = ExpenseApi()
     private lateinit var summary: TextView
     private lateinit var list: LinearLayout
-    private lateinit var refresh: Button
+    private lateinit var refresh: ImageButton
+    private lateinit var pendingAmount: TextView
     private var expenses: List<Expense> = emptyList()
 
     // Android's document picker lets the reviewer choose where the evidence is saved.
@@ -43,17 +51,21 @@ class PendingTransactionsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pending_transactions)
         summary = findViewById(R.id.tvQueueSummaryValue)
+        pendingAmount = findViewById(R.id.tvPendingAmount)
         list = findViewById(R.id.containerTransactions)
         refresh = findViewById(R.id.refresh)
         findViewById<Button>(R.id.newExpense).setOnClickListener { showExpenseForm(this) { proposal -> update { api.submit(proposal) } } }
         refresh.setOnClickListener { update() }
-        findViewById<Button>(R.id.export).setOnClickListener { export.launch("corpwallet-evidence.json") }
+        val report = findViewById<ImageButton>(R.id.export)
+        TooltipCompat.setTooltipText(report, report.contentDescription)
+        report.setOnClickListener { export.launch("corpwallet-evidence.json") }
         update()
     }
 
     private fun update(action: (() -> Unit)? = null) {
         refresh.isEnabled = false
         list.removeAllViews()
+        pendingAmount.text = "—"
         summary.text = "Updating expenses…"
         executor.execute {
             val result = runCatching { action?.invoke(); api.list() }
@@ -63,7 +75,7 @@ class PendingTransactionsActivity : AppCompatActivity() {
                 result.onSuccess { rows -> expenses = rows; render() }
                     .onFailure {
                         summary.text = if (BuildConfig.API_BASE.isEmpty()) "Set an HTTPS API address for this build."
-                        else "Review unavailable · tap Refresh"
+                        else "Could not load expenses. Tap Refresh to retry."
                         Toast.makeText(this, it.localizedMessage ?: "Connection unavailable", Toast.LENGTH_LONG).show()
                     }
             }
@@ -71,34 +83,90 @@ class PendingTransactionsActivity : AppCompatActivity() {
     }
 
     private fun render() {
-        val pending = expenses.count { it.status == "pending" }
-        summary.text = if (pending == 1) "1 expense to review" else "$pending expenses to review"
+        // The API accepts EUR only. Sum decimal values before formatting the pending total.
+        list.removeAllViews()
+        val pending = expenses.filter { it.status == "pending" }
+        val total = pending.fold(BigDecimal.ZERO) { amount, request -> amount + BigDecimal.valueOf(request.amount) }
+        pendingAmount.text = currencyFormat("EUR").format(total)
+        summary.text = when {
+            expenses.isEmpty() -> "No requests yet"
+            pending.isEmpty() -> "All requests reviewed"
+            pending.size == 1 -> "1 request to review"
+            else -> "${pending.size} requests to review"
+        }
         expenses.forEach { row ->
-            val card = layoutInflater.inflate(R.layout.item_transaction_card, list, false)
-            val amount = NumberFormat.getCurrencyInstance().apply { currency = Currency.getInstance(row.currency) }.format(row.amount)
+            val card = layoutInflater.inflate(R.layout.item_transaction_card, list, false) as LinearLayout
+            val amount = currencyFormat(row.currency).format(row.amount)
+            // At large font sizes or on narrow phones a stacked row gives both columns their full width.
+            val configuration = resources.configuration
+            if (configuration.screenWidthDp < 360 || configuration.fontScale > 1.25f) {
+                card.orientation = LinearLayout.VERTICAL
+                card.gravity = Gravity.START
+                card.findViewById<TextView>(R.id.tvMonogram).visibility = View.GONE
+                card.findViewById<LinearLayout>(R.id.recipientColumn).layoutParams =
+                    LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                card.findViewById<LinearLayout>(R.id.valueColumn).apply {
+                    gravity = Gravity.START
+                    layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                }
+            }
+            val initials = row.recipient.split(Regex("\\s+")).filter { it.isNotEmpty() && it.first().isLetterOrDigit() }
+                .take(2).joinToString("") { it.take(1) }.uppercase(Locale.getDefault())
+            card.findViewById<TextView>(R.id.tvMonogram).text = initials.ifEmpty { "•" }
             card.findViewById<TextView>(R.id.tvRecipient).text = row.recipient
-            card.findViewById<TextView>(R.id.tvTxId).text = "EXPENSE " + row.id.toString().padStart(2, '0')
             card.findViewById<TextView>(R.id.tvAmount).text = amount
-            card.findViewById<TextView>(R.id.tvRisk).text = row.purpose
-            card.findViewById<TextView>(R.id.tvMeta).text = if (row.reason.isEmpty()) "Supplier invoice" else row.reason
-            val status = card.findViewById<TextView>(R.id.tvStatus)
-            status.text = when (row.status) { "approved" -> "Approved"; "rejected" -> "Declined"; else -> "Review" }
-            status.setTextColor(Color.parseColor(if (row.status == "rejected") "#FFB7AA" else "#C9E4FF"))
-            card.isFocusable = true
+            card.findViewById<TextView>(R.id.tvPurpose).text = row.purpose
+            labelStatus(card.findViewById(R.id.tvStatus), row.status)
             card.setOnClickListener { inspect(row, amount) }
             list.addView(card)
         }
     }
 
-    private fun inspect(row: Expense, amount: String) {
-        val dialog = AlertDialog.Builder(this)
-            .setTitle(row.recipient)
-            .setMessage(listOf(amount, row.purpose, row.reason).filter { it.isNotEmpty() }.joinToString("\n\n"))
-            .setNeutralButton("Close", null)
-        if (row.status == "pending") {
-            dialog.setPositiveButton("Approve") { _, _ -> update { api.decide(row.id, true) } }
-            dialog.setNegativeButton("Decline") { _, _ -> update { api.decide(row.id, false) } }
+    private fun currencyFormat(code: String) = NumberFormat.getCurrencyInstance().apply {
+        currency = Currency.getInstance(code)
+    }
+
+    private fun labelStatus(view: TextView, status: String) {
+        val (label, colour) = when (status) {
+            "approved" -> "Approved" to R.color.approved
+            "rejected" -> "Declined" to R.color.declined
+            "pending" -> "Pending" to R.color.waiting
+            else -> "Unknown status" to R.color.muted
         }
+        view.text = label
+        view.setTextColor(getColor(colour))
+    }
+
+    private fun inspect(row: Expense, amount: String) {
+        val dialog = BottomSheetDialog(this)
+        val details = layoutInflater.inflate(R.layout.expense_details, null)
+        details.findViewById<TextView>(R.id.detailSupplier).text = row.recipient
+        details.findViewById<ImageButton>(R.id.detailClose).setOnClickListener { dialog.dismiss() }
+        details.findViewById<TextView>(R.id.detailAmount).text = amount
+        labelStatus(details.findViewById(R.id.detailStatus), row.status)
+        details.findViewById<TextView>(R.id.detailPurpose).text = row.purpose
+        val destination = if (row.destination == "crypto_wallet") "Crypto wallet" else "Supplier invoice"
+        details.findViewById<TextView>(R.id.detailDestination).text = "Request #${row.id} · $destination"
+        details.findViewById<TextView>(R.id.detailReason).apply {
+            text = row.reason
+            visibility = if (row.reason.isEmpty()) View.GONE else View.VISIBLE
+        }
+        val actions = details.findViewById<LinearLayout>(R.id.detailActions)
+        if (row.status == "pending") {
+            details.findViewById<Button>(R.id.detailApprove).setOnClickListener {
+                dialog.dismiss()
+                update { api.decide(row.id, true) }
+            }
+            details.findViewById<Button>(R.id.detailDecline).setOnClickListener {
+                dialog.dismiss()
+                update { api.decide(row.id, false) }
+            }
+        } else {
+            actions.visibility = View.GONE
+        }
+        dialog.setContentView(details)
+        dialog.behavior.skipCollapsed = true
+        dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
         dialog.show()
     }
 

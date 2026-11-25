@@ -1,6 +1,6 @@
 # CorpWallet · Team expense desk
 
-Review a team's sample expenses on Android. Open an invoice, approve or decline it, then see the decision in the log. Submit a fictional request with **Crypto wallet** as the destination and the server declines it immediately, even if someone later tries to approve it. All amounts are in euros.
+Review a team’s sample expenses on Android. The desk shows the euro amount awaiting approval and lists each request with its supplier, amount and status. Open a request to see its purpose and record a decision. Submit a fictional request with **Crypto wallet** as the destination and the server declines it immediately, even if someone later tries to approve it. All amounts are in euros.
 
 <img src="docs/expense-desk.png" alt="Android expense desk showing two sample invoices and a declined wallet" width="320">
 
@@ -8,8 +8,8 @@ Review a team's sample expenses on Android. Open an invoice, approve or decline 
 
 1. Open the app. **Paper & Ink** and **Northline Rail** are sample supplier invoices.
 2. Open an invoice and choose **Approve** or **Decline**. The desk reloads its decisions from the server.
-3. Open **Demo wallet** to read why the expense was automatically declined. **New sample expense** lets you try the same policy with your own fictional example.
-4. Choose **Export evidence** to save a JSON with two build settings. Open it in the [companion evidence reader](https://github.com/Adnanne-Bourhayal/mobile-security-poc-assistant) for a plain-language explanation.
+3. Open **Demo wallet** to read why the expense was automatically declined. **New expense** lets you try the same policy with your own fictional example.
+4. Use **Export build report** (the document icon beside CorpWallet) to save a JSON with two build settings. Open it in the [companion evidence reader](https://corpwallet-build-evidence.vercel.app/) for a plain-language explanation.
 
 This is a local learning workspace. It uses invented data, a single reviewer and one in-memory API process. Restarting the API restores the sample expenses. Do not enter financial or personal information. It does not process payments.
 

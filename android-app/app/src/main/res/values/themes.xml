@@ -1,9 +1,31 @@
 <resources>
-    <style name="Theme.CorpWallet" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="colorPrimary">#BEDDCB</item>
-        <item name="colorOnPrimary">#163524</item>
-        <item name="colorSecondary">#BFD1E4</item>
-        <item name="android:statusBarColor">#05070B</item>
-        <item name="android:navigationBarColor">#05070B</item>
+    <style name="Theme.CorpWallet" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/ink</item>
+        <item name="colorOnPrimary">@color/surface</item>
+        <item name="colorSecondary">@color/wallet_blue</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorSurfaceContainerHigh">@color/surface</item>
+        <item name="colorOnSurface">@color/ink</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/paper</item>
+        <item name="android:navigationBarColor">@color/ink</item>
+    </style>
+    <style name="ExpenseField" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="boxCornerRadiusTopStart">10dp</item>
+        <item name="boxCornerRadiusTopEnd">10dp</item>
+        <item name="boxCornerRadiusBottomStart">10dp</item>
+        <item name="boxCornerRadiusBottomEnd">10dp</item>
+    </style>
+    <style name="WalletIconButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:tint">@color/ink</item>
     </style>
 </resources>

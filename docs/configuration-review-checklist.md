@@ -12,7 +12,7 @@ Inspect these local artifacts:
 
 - `app/build/outputs/mapping/release/mapping.txt`: confirm mappings for app code. Android entry-point names can remain stable.
 - `app/build/outputs/apk/release/app-release-unsigned.apk`: inspect the merged manifest. Debuggable and backup should be disabled. A release for distribution requires your own signing process.
-- An exported JSON from **Export evidence** on the device: debug reports debugging enabled and R8 disabled, release reports the opposite. The R8 value declares the configured build variant. Validate the artifact separately when auditing a real release.
+- An exported JSON from **Export build report** on the device: debug reports debugging enabled and R8 disabled, release reports the opposite. The R8 value declares the configured build variant. Validate the artifact separately when auditing a real release.
 
 The mapping, APKs, keys and signing material stay out of Git. The UI reports build settings only. It does not infer that a device is compromised or that an attack occurred.
 
